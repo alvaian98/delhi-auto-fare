@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delhi Auto Fare Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .calculate {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .reset {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background-color: #e9f7ef;
+            border-left: 5px solid #28a745;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1.5;
+            display: none; /* Initially hide the result div */
+        }
+
+        .message {
+            font-weight: bold;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .green {
+            color: green;
+        }
+
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delhi Auto Fare Calculator</h2>
+        
+        <label for="distance">Enter distance (kms):</label>
+        <input type="number" id="distance" placeholder="Enter distance in kms">
+
+        <label for="waiting">Enter waiting time (minutes):</label>
+        <input type="number" id="waiting" placeholder="Enter waiting time in minutes">
+
+        <button class="calculate" onclick="calculateFare()">Calculate Fare</button>
+        
+        <div id="fareOutput" class="result"></div>
+
+        <label for="charged">Enter amount charged (Rs):</label>
+        <input type="number" id="charged" placeholder="Enter charged amount">
+        
+        <button class="calculate" onclick="calculateSaved()">Calculate Amount Saved</button>
+        
+        <div id="savedOutput" class="result"></div>
+
+        <button class="reset" onclick="resetCalculator()">Reset</button>
+    </div>
+
+    <script>
+        let totalFare = 0;
+
+        function calculateFare() {
+            const distance = parseFloat(document.getElementById("distance").value) || 0;
+            const waiting = parseFloat(document.getElementById("waiting").value) || 0;
+
+            let distanceFare = 0;
+            if (distance <= 1.5) {
+                distanceFare = 30;
+            } else {
+                distanceFare = 30 + (distance - 1.5) * 11;
+            }
+
+            const waitingCharge = waiting * 0.75;
+            totalFare = distanceFare + waitingCharge;
+
+            const fareOutput = document.getElementById("fareOutput");
+            fareOutput.innerHTML = `
+                Fare breakdown:<br>
+                Distance Fare: Rs. ${distanceFare.toFixed(2)}<br>
+                Waiting Charge: Rs. ${waitingCharge.toFixed(2)}<br>
+                Total Fare: Rs. ${totalFare.toFixed(2)}
+            `;
+            fareOutput.style.display = "block"; // Show the div after calculation
+        }
+
+        function calculateSaved() {
+            const charged = parseFloat(document.getElementById("charged").value) || 0;
+            const saved = charged - totalFare;
+
+            const savedOutput = document.getElementById("savedOutput");
+            savedOutput.innerHTML = `
+                Amount Charged: Rs. ${charged.toFixed(2)}<br>
+                Amount to be Saved: Rs. ${saved.toFixed(2)}
+            `;
+
+            let message = "";
+            if (saved > 0) {
+                message = `<p class="message red">Oh No! Extra Rs. ${saved.toFixed(2)} charged</p>`;
+            } else if (saved < 0) {
+                message = `<p class="message green">Wow! You paid Rs. ${Math.abs(saved).toFixed(2)} less</p>`;
+            } else {
+                message = `<p class="message green">Kudos! Exact Amount</p>`;
+            }
+
+            savedOutput.innerHTML += message;
+            savedOutput.style.display = "block"; // Show the div after calculation
+        }
+
+        function resetCalculator() {
+            document.getElementById("distance").value = "";
+            document.getElementById("waiting").value = "";
+            document.getElementById("charged").value = "";
+            document.getElementById("fareOutput").innerHTML = "";
+            document.getElementById("savedOutput").innerHTML = "";
+            document.getElementById("fareOutput").style.display = "none"; // Hide the div on reset
+            document.getElementById("savedOutput").style.display = "none"; // Hide the div on reset
+            totalFare = 0;
+        }
+    </script>
+</body>
+</html>

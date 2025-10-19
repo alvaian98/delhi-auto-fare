@@ -67,7 +67,7 @@
             border-radius: 6px;
             font-size: 16px;
             line-height: 1.5;
-            display: none; /* Initially hide the result div */
+            display: none;
         }
 
         .message {
@@ -116,6 +116,11 @@
             const distance = parseFloat(document.getElementById("distance").value) || 0;
             const waiting = parseFloat(document.getElementById("waiting").value) || 0;
 
+            // ✅ Detect current time
+            const now = new Date();
+            const hour = now.getHours();
+            const isNight = (hour >= 23 || hour < 5); // 11 PM to 5 AM
+
             let distanceFare = 0;
             if (distance <= 1.5) {
                 distanceFare = 30;
@@ -126,14 +131,20 @@
             const waitingCharge = waiting * 0.75;
             totalFare = distanceFare + waitingCharge;
 
+            // ✅ Apply 25% extra for night fare automatically
+            if (isNight) {
+                totalFare *= 1.25;
+            }
+
             const fareOutput = document.getElementById("fareOutput");
             fareOutput.innerHTML = `
                 Fare breakdown:<br>
                 Distance Fare: Rs. ${distanceFare.toFixed(2)}<br>
                 Waiting Charge: Rs. ${waitingCharge.toFixed(2)}<br>
+                ${isNight ? "Night Fare Applied (25% extra)<br>" : ""}
                 Total Fare: Rs. ${totalFare.toFixed(2)}
             `;
-            fareOutput.style.display = "block"; // Show the div after calculation
+            fareOutput.style.display = "block";
         }
 
         function calculateSaved() {
@@ -156,7 +167,7 @@
             }
 
             savedOutput.innerHTML += message;
-            savedOutput.style.display = "block"; // Show the div after calculation
+            savedOutput.style.display = "block";
         }
 
         function resetCalculator() {
@@ -165,8 +176,8 @@
             document.getElementById("charged").value = "";
             document.getElementById("fareOutput").innerHTML = "";
             document.getElementById("savedOutput").innerHTML = "";
-            document.getElementById("fareOutput").style.display = "none"; // Hide the div on reset
-            document.getElementById("savedOutput").style.display = "none"; // Hide the div on reset
+            document.getElementById("fareOutput").style.display = "none";
+            document.getElementById("savedOutput").style.display = "none";
             totalFare = 0;
         }
     </script>
